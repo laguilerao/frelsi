@@ -37,8 +37,7 @@ class Foretell(param: Parameters, intentos: Int) {
   var e56 = 0
   var g = 0
   var g1 = 0
-
-
+  var dh = 0
 
 
   records.printVals()
@@ -50,16 +49,19 @@ class Foretell(param: Parameters, intentos: Int) {
     val l = guess(urna(records.TOPE), TreeSet())
     val d = new Draw(j, l(0), l(1), l(2), l(3), l(4), l(5), 0)
     if (records.ganadores.contains(d.toString)) g1 += 1
-    if (!records.l12E.contains((d.getC1, d.getC2)))
-      if (!records.l23E.contains((d.getC2, d.getC3)))
-        if (!records.l34E.contains((d.getC3, d.getC4)))
-          if (!records.l45E.contains((d.getC4, d.getC5)))
-            if (!records.l56E.contains((d.getC5, d.getC6)))
-              if (records.ganadores.contains(d.toString)) {
-                i += 1
-                println(i + " " + d.pretty)
-              } else
-                g += 1
+    if (records.l12E.contains((d.getC1, d.getC2)))
+      if (records.l23E.contains((d.getC2, d.getC3)))
+        if (records.l34E.contains((d.getC3, d.getC4)))
+          if (records.l45E.contains((d.getC4, d.getC5)))
+            if (records.l56E.contains((d.getC5, d.getC6)))
+              if (records.distHist(d, 10, param.history) >= 3)
+                if (!records.ganadores.contains(d.toString)) {
+                  i += 1
+                  println(i + " " + d.pretty)
+                } else
+                  g += 1
+              else
+                dh += 1
             else
               e56 += 1
           else
@@ -78,6 +80,7 @@ class Foretell(param: Parameters, intentos: Int) {
   println("Descartados por P34: " + e34)
   println("Descartados por P45: " + e45)
   println("Descartados por P56: " + e56)
+  println("Descartados por DH: " + dh)
   println("Intentos: " + j)
   println
 }

@@ -32,6 +32,19 @@ class GameRecords(resultados: List[Draw]) {
      "0 "
   }
 
+  def distHist(d: Draw, t: Int, l: List[Draw]): Int =
+    l match {
+      case Nil => t
+      case head :: tail => {
+        val x = d.distancia(head)
+        if (x == 0)
+          0
+        else
+          distHist(d, if (x < t) x else t , tail)
+      }
+    }
+
+
   n = resultados.size
   var m12F: mutable.Map[(Int, Int), Int] = mutable.Map()
   var m23F: mutable.Map[(Int, Int), Int] = mutable.Map()
@@ -57,10 +70,10 @@ class GameRecords(resultados: List[Draw]) {
   var l45o: List[(Int, Int)] = List()
   var l56o: List[(Int, Int)] = List()
 
-  val LIM1 = 10
+  val LIM1 = 7
   val LIM2 = 150
   var TOPE = 0
-  val MAX = .40
+  val MAX = .30
 
   println("Obteniendo pares recientes")
   var n = resultados.size
@@ -152,11 +165,11 @@ class GameRecords(resultados: List[Draw]) {
   println("Outliers 56: " + l56o.size + " / " + m56F.size)
   println
 
-  m12R.toList.filter(l => LIM1 < l._2 && l._2 < LIM2).foreach(t => if (!l12o.contains(t._1)) l12E = t._1 :: l12E)
-  m23R.toList.filter(l => LIM1 < l._2 && l._2 < LIM2).foreach(t => if (!l23o.contains(t._1)) l23E = t._1 :: l23E)
-  m34R.toList.filter(l => LIM1 < l._2 && l._2 < LIM2).foreach(t => if (!l34o.contains(t._1)) l34E = t._1 :: l34E)
-  m45R.toList.filter(l => LIM1 < l._2 && l._2 < LIM2).foreach(t => if (!l45o.contains(t._1)) l45E = t._1 :: l45E)
-  m56R.toList.filter(l => LIM1 < l._2 && l._2 < LIM2).foreach(t => if (!l56o.contains(t._1)) l56E = t._1 :: l56E)
+  m12R.toList.filter(l => LIM1 <= l._2 && l._2 < LIM2).foreach(t => if (!l12o.contains(t._1)) l12E = t._1 :: l12E)
+  m23R.toList.filter(l => LIM1 <= l._2 && l._2 < LIM2).foreach(t => if (!l23o.contains(t._1)) l23E = t._1 :: l23E)
+  m34R.toList.filter(l => LIM1 <= l._2 && l._2 < LIM2).foreach(t => if (!l34o.contains(t._1)) l34E = t._1 :: l34E)
+  m45R.toList.filter(l => LIM1 <= l._2 && l._2 < LIM2).foreach(t => if (!l45o.contains(t._1)) l45E = t._1 :: l45E)
+  m56R.toList.filter(l => LIM1 <= l._2 && l._2 < LIM2).foreach(t => if (!l56o.contains(t._1)) l56E = t._1 :: l56E)
 
   println("Esperados 12: " + l12E.size)
   println("Esperados 23: " + l23E.size)
@@ -165,13 +178,13 @@ class GameRecords(resultados: List[Draw]) {
   println("Esperados 56: " + l56E.size)
 
   println
-  resultados.foreach(ri => {
+/*  resultados.foreach(ri => {
     print(has(l12E,(ri.getC1, ri.getC2)))
     print(has(l23E,(ri.getC2, ri.getC3)))
     print(has(l34E,(ri.getC3, ri.getC4)))
     print(has(l45E,(ri.getC4, ri.getC5)))
     print(has(l56E,(ri.getC5, ri.getC6)))
     println
-  })
+  })*/
 }
 
