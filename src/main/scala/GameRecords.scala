@@ -64,16 +64,16 @@ class GameRecords(resultados: List[Draw]) {
   var l45E: List[(Int, Int)] = List()
   var l56E: List[(Int, Int)] = List()
 
-  var l12o: List[(Int, Int)] = List()
-  var l23o: List[(Int, Int)] = List()
-  var l34o: List[(Int, Int)] = List()
-  var l45o: List[(Int, Int)] = List()
-  var l56o: List[(Int, Int)] = List()
+  var l12e: List[(Int, Int)] = List()
+  var l23e: List[(Int, Int)] = List()
+  var l34e: List[(Int, Int)] = List()
+  var l45e: List[(Int, Int)] = List()
+  var l56e: List[(Int, Int)] = List()
 
-  val LIM1 = 7
-  val LIM2 = 150
+  val LIM1 = 3
+
   var TOPE = 0
-  val MAX = .30
+  val MAX = .7
 
   println("Obteniendo pares recientes")
   var n = resultados.size
@@ -93,7 +93,7 @@ class GameRecords(resultados: List[Draw]) {
   println("R45: " + m45R.size)
   println("R56: " + m56R.size)
   println
-  println("Obteniendo outliers")
+  println("Obteniendo esperados")
   var cont = 0
   for (i1 <- 1 to TOPE - 5)
     for (i2 <- i1 + 1 to TOPE - 4)
@@ -111,65 +111,65 @@ class GameRecords(resultados: List[Draw]) {
 
   var acum = 0.0
   var aux = 0
-  m12F.toList.sortBy(_._2).foreach(p => {
+  m12F.toList.sortBy(_._2).reverse.foreach(p => {
     acum += p._2.toDouble / cont.toDouble
     if (acum < MAX || aux == p._2) {
       aux = p._2
-      l12o = l12o ::: List(p._1)
+      l12e = l12e ::: List(p._1)
     }
   })
-  println("Outliers 12: " + l12o.size + " / " + m12F.size)
+  println("Esperados 12: " + l12e.size + " / " + m12F.size)
 
   acum = 0.0
   aux = 0
-  m23F.toList.sortBy(_._2).foreach(p => {
+  m23F.toList.sortBy(_._2).reverse.foreach(p => {
     acum += p._2.toDouble / cont.toDouble
     if (acum < MAX || aux == p._2) {
       aux = p._2
-      l23o = l23o ::: List(p._1)
+      l23e = l23e ::: List(p._1)
     }
   })
-  println("Outliers 23: " + l23o.size + " / " + m23F.size)
+  println("Esperados 23: " + l23e.size + " / " + m23F.size)
 
   acum = 0.0
   aux = 0
-  m34F.toList.sortBy(_._2).foreach(p => {
+  m34F.toList.sortBy(_._2).reverse.foreach(p => {
     acum += p._2.toDouble / cont.toDouble
     if (acum < MAX || aux == p._2) {
       aux = p._2
-      l34o = p._1 :: l34o
+      l34e = p._1 :: l34e
     }
   })
-  println("Outliers 34: " + l34o.size + " / " + m34F.size)
+  println("Esperados 34: " + l34e.size + " / " + m34F.size)
 
   acum = 0.0
   aux = 0
-  m45F.toList.sortBy(_._2).foreach(p => {
+  m45F.toList.sortBy(_._2).reverse.foreach(p => {
     acum += p._2.toDouble / cont.toDouble
     if (acum < MAX || aux == p._2) {
       aux = p._2
-      l45o = p._1 :: l45o
+      l45e = p._1 :: l45e
     }
   })
-  println("Outliers 45: " + l45o.size + " / " + m45F.size)
+  println("Esperados 45: " + l45e.size + " / " + m45F.size)
 
   acum = 0.0
   aux = 0
-  m56F.toList.sortBy(_._2).foreach(p => {
+  m56F.toList.sortBy(_._2).reverse.foreach(p => {
     acum += p._2.toDouble / cont.toDouble
     if (acum < MAX || aux == p._2) {
       aux = p._2
-      l56o = p._1 :: l56o
+      l56e = p._1 :: l56e
     }
   })
-  println("Outliers 56: " + l56o.size + " / " + m56F.size)
+  println("Esperados 56: " + l56e.size + " / " + m56F.size)
   println
 
-  m12R.toList.filter(l => LIM1 <= l._2 && l._2 < LIM2).foreach(t => if (!l12o.contains(t._1)) l12E = t._1 :: l12E)
-  m23R.toList.filter(l => LIM1 <= l._2 && l._2 < LIM2).foreach(t => if (!l23o.contains(t._1)) l23E = t._1 :: l23E)
-  m34R.toList.filter(l => LIM1 <= l._2 && l._2 < LIM2).foreach(t => if (!l34o.contains(t._1)) l34E = t._1 :: l34E)
-  m45R.toList.filter(l => LIM1 <= l._2 && l._2 < LIM2).foreach(t => if (!l45o.contains(t._1)) l45E = t._1 :: l45E)
-  m56R.toList.filter(l => LIM1 <= l._2 && l._2 < LIM2).foreach(t => if (!l56o.contains(t._1)) l56E = t._1 :: l56E)
+  m12R.toList.filter(l => LIM1 <= l._2 && l._2 <= (l12e.size/2)).foreach(t => if (l12e.contains(t._1)) l12E = t._1 :: l12E)
+  m23R.toList.filter(l => LIM1 <= l._2 && l._2 <= (l23e.size/2)).foreach(t => if (l23e.contains(t._1)) l23E = t._1 :: l23E)
+  m34R.toList.filter(l => LIM1 <= l._2 && l._2 <= (l34e.size/2)).foreach(t => if (l34e.contains(t._1)) l34E = t._1 :: l34E)
+  m45R.toList.filter(l => LIM1 <= l._2 && l._2 <= (l45e.size/2)).foreach(t => if (l45e.contains(t._1)) l45E = t._1 :: l45E)
+  m56R.toList.filter(l => LIM1 <= l._2 && l._2 <= (l56e.size/2)).foreach(t => if (l56e.contains(t._1)) l56E = t._1 :: l56E)
 
   println("Esperados 12: " + l12E.size)
   println("Esperados 23: " + l23E.size)
