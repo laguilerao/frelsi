@@ -54,7 +54,7 @@ class Foretell(param: Parameters, intentos: Int) {
         if (records.l34E.contains((d.getC3, d.getC4)))
           if (records.l45E.contains((d.getC4, d.getC5)))
             if (records.l56E.contains((d.getC5, d.getC6)))
-              if (records.distHist(d, 10, param.history) >= 3)
+              if (records.distHist(d, 10, param.history) > 3)
                 if (!records.ganadores.contains(d.toString)) {
                   i += 1
                   println(i + " " + d.pretty)
@@ -70,8 +70,21 @@ class Foretell(param: Parameters, intentos: Int) {
           e34 += 1
       else
         e23 += 1
-    else
+    else {
       e12 += 1
+/*      if (j % 10000 == 0){
+        println
+        println("Ganadores: " + g + " / " + g1)
+        println("Descartados por P12: " + e12)
+        println("Descartados por P23: " + e23)
+        println("Descartados por P34: " + e34)
+        println("Descartados por P45: " + e45)
+        println("Descartados por P56: " + e56)
+        println("Descartados por DH: " + dh)
+        println("Intentos: " + j)
+        println
+      }*/
+    }
   }
   println
   println("Ganadores: " + g + " / " + g1)

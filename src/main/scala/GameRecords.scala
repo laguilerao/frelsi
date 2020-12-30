@@ -26,7 +26,7 @@ class GameRecords(resultados: List[Draw]) {
   }
 
   def has(l: List[(Int, Int)], t: (Int, Int)) = {
-    if (!l.contains(t))
+    if (l.contains(t))
      "1 "
     else
      "0 "
@@ -44,8 +44,27 @@ class GameRecords(resultados: List[Draw]) {
       }
     }
 
+  def getPairFrequent(lp: List[((Int,Int),Int)]): List[(Int,Int)] = {
+    var acum = 0.0
+    var aux = 0
+    var lt: List[(Int,Int)] = List()
 
-  n = resultados.size
+    lp.sortBy(_._2).reverse.foreach(p => {
+      acum += p._2.toDouble / cont.toDouble
+      if (acum < MAX || aux == p._2) {
+        aux = p._2
+        lt = lt ::: List(p._1)
+      }
+    })
+    lt
+  }
+
+  def getPairExpected(lp: List[((Int,Int),Int)],lpe: List[(Int,Int)],s: Int): List[(Int,Int)] = {
+    var lt: List[(Int,Int)] = List()
+    lp.sortBy(_._2).reverse.foreach(t => if (lpe.contains(t._1) && lt.size < s) lt = t._1 :: lt)
+    lt.reverse
+  }
+
   var m12F: mutable.Map[(Int, Int), Int] = mutable.Map()
   var m23F: mutable.Map[(Int, Int), Int] = mutable.Map()
   var m34F: mutable.Map[(Int, Int), Int] = mutable.Map()
@@ -58,25 +77,12 @@ class GameRecords(resultados: List[Draw]) {
   var m45R: mutable.Map[(Int, Int), Int] = mutable.Map()
   var m56R: mutable.Map[(Int, Int), Int] = mutable.Map()
 
-  var l12E: List[(Int, Int)] = List()
-  var l23E: List[(Int, Int)] = List()
-  var l34E: List[(Int, Int)] = List()
-  var l45E: List[(Int, Int)] = List()
-  var l56E: List[(Int, Int)] = List()
-
-  var l12e: List[(Int, Int)] = List()
-  var l23e: List[(Int, Int)] = List()
-  var l34e: List[(Int, Int)] = List()
-  var l45e: List[(Int, Int)] = List()
-  var l56e: List[(Int, Int)] = List()
-
-  val LIM1 = 3
-
   var TOPE = 0
-  val MAX = .7
+  val MAX = .80
+  var n = resultados.size
 
   println("Obteniendo pares recientes")
-  var n = resultados.size
+
   resultados.foreach(ri => {
     ganadores += ri.toString
     m12R((ri.getC1, ri.getC2)) = n
@@ -109,67 +115,27 @@ class GameRecords(resultados: List[Draw]) {
               cont += 1
             }
 
-  var acum = 0.0
-  var aux = 0
-  m12F.toList.sortBy(_._2).reverse.foreach(p => {
-    acum += p._2.toDouble / cont.toDouble
-    if (acum < MAX || aux == p._2) {
-      aux = p._2
-      l12e = l12e ::: List(p._1)
-    }
-  })
-  println("Esperados 12: " + l12e.size + " / " + m12F.size)
+  val l12e = getPairFrequent(m12F.toList)
+  println("Frecuentes 12: " + l12e.size + " / " + m12F.size)
 
-  acum = 0.0
-  aux = 0
-  m23F.toList.sortBy(_._2).reverse.foreach(p => {
-    acum += p._2.toDouble / cont.toDouble
-    if (acum < MAX || aux == p._2) {
-      aux = p._2
-      l23e = l23e ::: List(p._1)
-    }
-  })
-  println("Esperados 23: " + l23e.size + " / " + m23F.size)
+  val l23e = getPairFrequent(m23F.toList)
+  println("Frecuentes 23: " + l23e.size + " / " + m23F.size)
 
-  acum = 0.0
-  aux = 0
-  m34F.toList.sortBy(_._2).reverse.foreach(p => {
-    acum += p._2.toDouble / cont.toDouble
-    if (acum < MAX || aux == p._2) {
-      aux = p._2
-      l34e = p._1 :: l34e
-    }
-  })
-  println("Esperados 34: " + l34e.size + " / " + m34F.size)
+  val l34e = getPairFrequent((m34F.toList))
+  println("Frecuentes 34: " + l34e.size + " / " + m34F.size)
 
-  acum = 0.0
-  aux = 0
-  m45F.toList.sortBy(_._2).reverse.foreach(p => {
-    acum += p._2.toDouble / cont.toDouble
-    if (acum < MAX || aux == p._2) {
-      aux = p._2
-      l45e = p._1 :: l45e
-    }
-  })
-  println("Esperados 45: " + l45e.size + " / " + m45F.size)
+  val l45e = getPairFrequent(m45F.toList)
+  println("Frecuentes 45: " + l45e.size + " / " + m45F.size)
 
-  acum = 0.0
-  aux = 0
-  m56F.toList.sortBy(_._2).reverse.foreach(p => {
-    acum += p._2.toDouble / cont.toDouble
-    if (acum < MAX || aux == p._2) {
-      aux = p._2
-      l56e = p._1 :: l56e
-    }
-  })
-  println("Esperados 56: " + l56e.size + " / " + m56F.size)
+  val l56e = getPairFrequent(m56F.toList)
+  println("Frecuentes 56: " + l56e.size + " / " + m56F.size)
   println
 
-  m12R.toList.filter(l => LIM1 <= l._2 && l._2 <= (l12e.size/2)).foreach(t => if (l12e.contains(t._1)) l12E = t._1 :: l12E)
-  m23R.toList.filter(l => LIM1 <= l._2 && l._2 <= (l23e.size/2)).foreach(t => if (l23e.contains(t._1)) l23E = t._1 :: l23E)
-  m34R.toList.filter(l => LIM1 <= l._2 && l._2 <= (l34e.size/2)).foreach(t => if (l34e.contains(t._1)) l34E = t._1 :: l34E)
-  m45R.toList.filter(l => LIM1 <= l._2 && l._2 <= (l45e.size/2)).foreach(t => if (l45e.contains(t._1)) l45E = t._1 :: l45E)
-  m56R.toList.filter(l => LIM1 <= l._2 && l._2 <= (l56e.size/2)).foreach(t => if (l56e.contains(t._1)) l56E = t._1 :: l56E)
+  val l12E = getPairExpected(m12R.toList, l12e, l12e.size/5)
+  val l23E = getPairExpected(m23R.toList, l23e, l23e.size/4)
+  val l34E = getPairExpected(m34R.toList, l34e, l34e.size/3)
+  val l45E = getPairExpected(m45R.toList, l45e, l45e.size/4)
+  val l56E = getPairExpected(m56R.toList, l56e, l56e.size/5)
 
   println("Esperados 12: " + l12E.size)
   println("Esperados 23: " + l23E.size)
@@ -177,14 +143,5 @@ class GameRecords(resultados: List[Draw]) {
   println("Esperados 45: " + l45E.size)
   println("Esperados 56: " + l56E.size)
 
-  println
-/*  resultados.foreach(ri => {
-    print(has(l12E,(ri.getC1, ri.getC2)))
-    print(has(l23E,(ri.getC2, ri.getC3)))
-    print(has(l34E,(ri.getC3, ri.getC4)))
-    print(has(l45E,(ri.getC4, ri.getC5)))
-    print(has(l56E,(ri.getC5, ri.getC6)))
-    println
-  })*/
 }
 
